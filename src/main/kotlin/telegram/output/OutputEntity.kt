@@ -1,14 +1,8 @@
 package telegram.output
 
+import io.ktor.client.statement.*
 import telegram.Api
-import telegram.ChatId
 
 interface OutputEntity {
-    val chatId: ChatId
-    val disableNotification: Boolean?
-
-    val replyToMessageId: Int?
-    val allowSendingWithoutReply: Boolean?
-
-    suspend fun getSent(api: Api)
+    suspend fun getSent(api: Api): HttpResponse
 }

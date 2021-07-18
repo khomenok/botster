@@ -8,6 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import telegram.input.Updates
+import telegram.output.OutputEditMessageText
 import telegram.output.OutputMessage
 
 class Api (
@@ -40,6 +41,14 @@ class Api (
             contentType(ContentType.Application.Json)
             method = HttpMethod.Post
             body = message
+        }
+    }
+
+    suspend fun editMessageText(editMessageEntity: OutputEditMessageText): HttpResponse {
+        return client.request(getMethodUri("editMessageText")) {
+            contentType(ContentType.Application.Json)
+            method = HttpMethod.Post
+            body = editMessageEntity
         }
     }
 }
