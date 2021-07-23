@@ -2,18 +2,18 @@ package logic.step
 
 import telegram.input.Update
 
-interface LogicValidator<State> {
-    fun validate(update: Update, state: State): Boolean
+interface LogicValidator<State, Input> {
+    fun validate(update: Input, state: State): Boolean
 }
 
-class DummyValidator<State> : LogicValidator<State> {
-    override fun validate(update: Update, state: State): Boolean = true
+class DummyValidator<State, Input> : LogicValidator<State, Input> {
+    override fun validate(update: Input, state: State): Boolean = true
 }
 
-class CombinedValidator<State> (
-    private vararg val validators: LogicValidator<State>,
-) : LogicValidator<State> {
-    override fun validate(update: Update, state: State): Boolean {
+class CombinedValidator<State, Input> (
+    private vararg val validators: LogicValidator<State, Input>,
+) : LogicValidator<State, Input> {
+    override fun validate(update: Input, state: State): Boolean {
         return validators.firstOrNull { !it.validate(update, state) } != null
     }
 }

@@ -3,22 +3,28 @@ package logic.step
 import common.Builder
 import telegram.input.TextMessage
 import telegram.input.Update
+import telegram.output.OutputEntity
 import java.util.*
 import kotlin.properties.Delegates
 
-class TextMessageValidator<State>() : LogicValidator<State> {
+typealias TelegramLogicStep<State> = LogicStep<State, Update, OutputEntity>
+typealias TelegramLogicStepResultBuilder<State> = LogicStepResultBuilder<State, Update, OutputEntity>
+typealias TelegramLogicValidator<State> = LogicValidator<State, Update>
+
+class TextMessageValidator<State>() : TelegramLogicValidator<State> {
     override fun validate(update: Update, state: State): Boolean {
         return update.message?.text != null
     }
 }
 
-class TextMessageLogicStepBuilder<State>(): Builder<LogicStep<State>> {
+// todo: move out of the logic, cause this thing now about telegram
+class TextMessageLogicStepBuilder<State>(): Builder<TelegramLogicStep<State>> {
     var key: LogicStepKey? = null
-    var validate: LogicValidator<State>? = null
-    var process: LogicStepResultBuilder<State>.(update: Update, state: State, message: TextMessage) ->
+    var validate: TelegramLogicValidator<State>? = null
+    var process: TelegramLogicStepResultBuilder<State>.(update: Update, state: State, message: TextMessage) ->
     Unit by Delegates.notNull()
 
-    override fun build(): LogicStep<State> {
+    override fun build(): TelegramLogicStep<State> {
         val combinedValidator = if (validate == null) TextMessageValidator()
         else CombinedValidator(TextMessageValidator(), validate!!)
 

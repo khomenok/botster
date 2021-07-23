@@ -9,21 +9,22 @@ import telegram.output.OutputEntity
 import telegram.input.Update
 import kotlin.properties.Delegates
 
-// messages from one sender in different chats probably should go to different logic entities
-fun Update.logicSenderHash() = "${this.senderChatId()}-${this.senderId()}"
+interface LogicInput {
+    fun logicSenderHash(): String
+}
 
-class Logic<State>(
-    private val steps: Map<LogicStepKey, LogicStep<State>>,
+class Logic<State, Input : LogicInput, Output>(
+    private val steps: Map<LogicStepKey, LogicStep<State, Input, Output>>,
     private val entrypoints: List<LogicStepKey>,
     private var initialState: () -> State,
 ) {
-    private val logicEntitiesByHash = mutableMapOf<String, LogicEntity<State>>()
+    private val logicEntitiesByHash = mutableMapOf<String, LogicEntity<State, Input, Output>>()
 
-    private val _outputFlow = MutableSharedFlow<OutputEntity>()
+    private val _outputFlow = MutableSharedFlow<Output>()
     val outputFlow = _outputFlow.asSharedFlow()
 
 
-    suspend fun process(update: Update): LogicStepResult<State> {
+    suspend fun process(update: Input): LogicStepResult<State, Input, Output> {
         val senderHash = update.logicSenderHash()
         if (!logicEntitiesByHash.contains(senderHash)) {
             logicEntitiesByHash[senderHash] = LogicEntity(steps, entrypoints, initialState())
@@ -34,29 +35,33 @@ class Logic<State>(
     }
 }
 
-class LogicBuilder<State>(): Builder<Logic<State>> {
-    private val steps = mutableMapOf<LogicStepKey, LogicStep<State>>()
+typealias TelegramLogic<State> = Logic<State, Update, OutputEntity>
+
+// todo: move out of the logic, cause this thing now about telegram
+class LogicBuilder<State>(): Builder<TelegramLogic<State>> {
+    private val steps = mutableMapOf<LogicStepKey, TelegramLogicStep<State>>()
     private val entrypoints = mutableListOf<LogicStepKey>()
     var initialState: () -> State by Delegates.notNull()
 
-    private fun <B : Builder<LogicStep<State>>> buildStep(builder: B, init: B.() -> Unit): LogicStep<State> {
+    private fun <B : Builder<TelegramLogicStep<State>>> buildStep(builder: B, init: B.() -> Unit): TelegramLogicStep<State> {
         val builtStep = builderFun(builder, init)
         // TODO: throw duplicated keys
         steps[builtStep.key] = builtStep
         return builtStep
     }
 
-    fun step(init: BasicLogicStepBuilder<State>.() -> Unit)= buildStep(BasicLogicStepBuilder(), init)
+    fun step(init: BasicLogicStepBuilder<State, Update, OutputEntity>.() -> Unit)= buildStep(BasicLogicStepBuilder(), init)
     fun textMessageStep(init: TextMessageLogicStepBuilder<State>.() -> Unit) = buildStep(TextMessageLogicStepBuilder(), init)
     fun callbackQueryStep(init: CallbackQueryLogicStepBuilder<State>.() -> Unit) = buildStep(CallbackQueryLogicStepBuilder(), init)
 
-    fun entrypoint(step: LogicStep<State>) {
+    fun entrypoint(step: TelegramLogicStep<State>) {
         entrypoints.add(step.key)
     }
 
-    override fun build(): Logic<State> {
+    override fun build(): TelegramLogic<State> {
         return Logic(steps.toMap(), entrypoints.toList(), initialState)
     }
 }
 
-fun <State>logic(init: LogicBuilder<State>.() -> Unit): Logic<State> = builderFun(LogicBuilder(), init)
+// todo: move out of the logic, cause this thing now about telegram
+fun <State>logic(init: LogicBuilder<State>.() -> Unit): TelegramLogic<State> = builderFun(LogicBuilder(), init)

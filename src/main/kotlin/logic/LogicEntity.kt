@@ -4,32 +4,34 @@ import logic.step.LogicStep
 import logic.step.LogicStepKey
 import logic.step.LogicStepResult
 import logic.step.LogicStepResultBuilder
-import telegram.input.Update
 
-class LogicEntity<State>(
-    private val steps: Map<LogicStepKey, LogicStep<State>>,
+class LogicEntity<State, Input, Output>(
+    private val steps: Map<LogicStepKey, LogicStep<State, Input, Output>>,
     private val entrypoints: List<LogicStepKey>,
     private var state: State,
 ) {
     private var currentStep: LogicStepKey? = null
 
     private fun stepResultBuilderFun(
-        builder: LogicStepResultBuilder<State>,
-        init: LogicStepResultBuilder<State>.(update: Update, state: State) -> Unit,
-        update: Update,
-    ): LogicStepResult<State> {
+        builder: LogicStepResultBuilder<State, Input, Output>,
+        init: LogicStepResultBuilder<State, Input, Output>.(update: Input, state: State) -> Unit,
+        update: Input,
+    ): LogicStepResult<State, Input, Output> {
         builder.init(update, state)
         return builder.build()
     }
 
-    private fun processStep(update: Update, step: LogicStep<State>): LogicStepResult<State> {
+    private fun processStep(
+        update: Input,
+        step: LogicStep<State, Input, Output>,
+    ): LogicStepResult<State, Input, Output> {
         val result = stepResultBuilderFun(LogicStepResultBuilder(update, state), step.process, update)
         state = result.nextState
         currentStep = result.nextStep
         return result
     }
 
-    fun process(update: Update): LogicStepResult<State> {
+    fun process(update: Input): LogicStepResult<State, Input, Output> {
         val allEntrypoints = if (currentStep != null) // TODO: make lists more optimized
             listOf(listOf(currentStep), entrypoints).flatten() else entrypoints
 
