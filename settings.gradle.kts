@@ -1,3 +1,3 @@
 
-rootProject.name = "telegerman-bot"
+rootProject.name = "botster"
 
