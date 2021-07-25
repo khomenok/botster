@@ -1,4 +1,5 @@
 plugins {
+    application
     kotlin("jvm") version "1.5.10"
     id("maven-publish")
 }
@@ -16,6 +17,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
