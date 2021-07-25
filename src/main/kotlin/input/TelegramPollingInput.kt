@@ -13,10 +13,11 @@ class TelegramPollingInput(
 ): FlowInput<Update> {
     private var canPoll = true
 
-    @OptIn(ExperimentalTime::class)
-    override suspend fun setupFlow(): SharedFlow<Update> {
-        val _inputFlow = MutableSharedFlow<Update>()
+    private val _inputFlow = MutableSharedFlow<Update>()
+    override val inputFlow = _inputFlow.asSharedFlow()
 
+    @OptIn(ExperimentalTime::class)
+    override suspend fun setupFlow() {
         canPoll = true
         while (canPoll) {
             val updates = api.getUpdates()
@@ -26,7 +27,6 @@ class TelegramPollingInput(
 
             delay(Duration.milliseconds(delayInMilliseconds))
         }
-        return _inputFlow.asSharedFlow()
     }
 
     override fun stop() {

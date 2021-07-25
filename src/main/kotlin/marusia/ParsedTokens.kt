@@ -1,4 +1,4 @@
-package ru.kotmarusia.api
+package marusia
 
 data class ParsedTokens (
     val tokens: List<String>

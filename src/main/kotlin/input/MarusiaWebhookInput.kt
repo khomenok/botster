@@ -2,26 +2,26 @@ package input
 
 import io.ktor.application.*
 import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
-import kotlinx.coroutines.flow.*
-import ru.kotmarusia.api.Input
+import logic.Logic
+import marusia.Input
+import marusia.Output
 
-class MarusiaWebhookInput (
+class MarusiaWebhookInput<State> (
+    private val logic: Logic<State, Input, Output>,
     private val app: Application,
     private val webhookUri: String = "/webhook"
-) : FlowInput<Input> {
-    override suspend fun setupFlow(): SharedFlow<Input> {
-        val _inputFlow = MutableSharedFlow<Input>()
-
+) {
+    fun setupWebhook() {
         app.routing {
             post(webhookUri) {
-                _inputFlow.emit(call.receive())
+                val processed = logic.process(call.receive())
+                if (processed.output.size != 1) {
+                    throw Exception("Marusia logic step should return exactly one respond")
+                }
+                call.respond(processed.output[0])
             }
         }
-        return _inputFlow.asSharedFlow()
-    }
-
-    override fun stop() {
-        throw Exception("Marusia webhook can't be stopped in application for now")
     }
 }

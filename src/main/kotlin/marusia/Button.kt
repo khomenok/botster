@@ -1,4 +1,4 @@
-package ru.kotmarusia.api
+package marusia
 
 typealias ButtonPayload = Any
 

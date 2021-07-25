@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.botster"
-version = "0.0.1"
+version = "0.0.5"
 
 repositories {
     mavenCentral()

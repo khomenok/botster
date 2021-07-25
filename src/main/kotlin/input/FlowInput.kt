@@ -3,6 +3,7 @@ package input
 import kotlinx.coroutines.flow.SharedFlow
 
 interface FlowInput<Input> {
-    suspend fun setupFlow() : SharedFlow<Input>
+    val inputFlow: SharedFlow<Input>
+    suspend fun setupFlow()
     fun stop()
 }

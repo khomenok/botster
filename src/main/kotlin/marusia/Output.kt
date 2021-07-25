@@ -1,7 +1,9 @@
-package ru.kotmarusia.api
+package marusia
 
-data class Output (
+class Output (
     val response: Response,
-    val session: InputSession,
-    val version: String = "1.0",
-)
+    inputMessage: Input,
+) {
+    val session = inputMessage.session
+    val version = inputMessage.version
+}

@@ -1,4 +1,4 @@
-package ru.kotmarusia.api
+package marusia
 
 enum class MetaInterface { screen }
 

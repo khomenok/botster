@@ -1,4 +1,4 @@
-package ru.kotmarusia.api
+package marusia
 
 import com.google.gson.annotations.SerializedName
 
