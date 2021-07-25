@@ -1,19 +1,19 @@
-package input
+package marusia_logic
 
 import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import logic.Logic
-import marusia.Input
-import marusia.Output
+import marusia.input.MarusiaInput
+import marusia.output.MarusiaOutput
 
-class MarusiaWebhookInput<State> (
-    private val logic: Logic<State, Input, Output>,
+class MarusiaWebhook<State> (
+    private val logic: Logic<State, MarusiaInput, MarusiaOutput>,
     private val app: Application,
     private val webhookUri: String = "/webhook"
 ) {
-    fun setupWebhook() {
+    fun setup() {
         app.routing {
             post(webhookUri) {
                 val processed = logic.process(call.receive())

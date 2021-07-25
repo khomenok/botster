@@ -1,4 +1,4 @@
-package marusia
+package marusia.output
 
 typealias ButtonPayload = Any
 

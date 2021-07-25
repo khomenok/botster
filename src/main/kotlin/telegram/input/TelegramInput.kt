@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import logic.LogicInput
 import telegram.ChatId
 
-data class Update (
+data class TelegramInput (
     @SerializedName("update_id") val updateId: Int,
     @SerializedName("message") val message: Message? = null,
     @SerializedName("edited_message") val editedMessage: Message? = null,
@@ -30,7 +30,7 @@ data class Update (
     override fun logicSenderHash() = "${this.senderChatId()}-${this.senderId()}"
 }
 
-data class Updates (
+data class TelegramInputs (
     val ok: Boolean,
-    val result: List<Update>,
+    val result: List<TelegramInput>,
 )

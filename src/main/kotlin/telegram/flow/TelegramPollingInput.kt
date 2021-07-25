@@ -1,19 +1,20 @@
-package input
+package telegram.flow
 
+import common.FlowInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import telegram.Api
-import telegram.input.Update
+import telegram.input.TelegramInput
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 class TelegramPollingInput(
     private val api: Api,
     private val delayInMilliseconds: Int = 300,
-): FlowInput<Update> {
+): FlowInput<TelegramInput> {
     private var canPoll = true
 
-    private val _inputFlow = MutableSharedFlow<Update>()
+    private val _inputFlow = MutableSharedFlow<TelegramInput>()
     override val inputFlow = _inputFlow.asSharedFlow()
 
     @OptIn(ExperimentalTime::class)

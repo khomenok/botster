@@ -1,8 +1,10 @@
-package marusia
+package marusia.input
 
 import logic.LogicInput
+import marusia.InputSession
+import marusia.Meta
 
-data class Input (
+data class MarusiaInput (
     val meta: Meta,
     val request: Request,
     val session: InputSession,

@@ -1,8 +1,6 @@
-package logic.step
+package logic.steps
 
 import common.Builder
-import telegram.output.OutputEntity
-import telegram.input.Update
 
 typealias LogicStepKey = String
 

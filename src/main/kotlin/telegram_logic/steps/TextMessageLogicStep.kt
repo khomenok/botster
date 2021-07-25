@@ -1,27 +1,25 @@
-package logic.step
+package telegram_logic.steps
 
 import common.Builder
+import logic.steps.BasicLogicStep
+import logic.steps.CombinedValidator
+import logic.steps.LogicStepKey
+import telegram_logic.*
 import telegram.input.TextMessage
-import telegram.input.Update
-import telegram.output.OutputEntity
+import telegram.input.TelegramInput
 import java.util.*
 import kotlin.properties.Delegates
 
-typealias TelegramLogicStep<State> = LogicStep<State, Update, OutputEntity>
-typealias TelegramLogicStepResultBuilder<State> = LogicStepResultBuilder<State, Update, OutputEntity>
-typealias TelegramLogicValidator<State> = LogicValidator<State, Update>
-
 class TextMessageValidator<State>() : TelegramLogicValidator<State> {
-    override fun validate(update: Update, state: State): Boolean {
-        return update.message?.text != null
+    override fun validate(input: TelegramInput, state: State): Boolean {
+        return input.message?.text != null
     }
 }
 
-// todo: move out of the logic, cause this thing now about telegram
 class TextMessageLogicStepBuilder<State>(): Builder<TelegramLogicStep<State>> {
     var key: LogicStepKey? = null
     var validate: TelegramLogicValidator<State>? = null
-    var process: TelegramLogicStepResultBuilder<State>.(update: Update, state: State, message: TextMessage) ->
+    var process: TelegramLogicStepResultBuilder<State>.(input: TelegramInput, state: State, message: TextMessage) ->
     Unit by Delegates.notNull()
 
     override fun build(): TelegramLogicStep<State> {
@@ -31,6 +29,6 @@ class TextMessageLogicStepBuilder<State>(): Builder<TelegramLogicStep<State>> {
         return BasicLogicStep(
             key ?: UUID.randomUUID().toString(),
             combinedValidator,
-        ) { update, state -> process(update, state, TextMessage(update.message!!)) }
+        ) { input, state -> process(input, state, TextMessage(input.message!!)) }
     }
 }

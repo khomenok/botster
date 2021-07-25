@@ -1,4 +1,4 @@
-package input
+package common
 
 import kotlinx.coroutines.flow.SharedFlow
 

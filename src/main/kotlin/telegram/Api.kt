@@ -7,7 +7,7 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import telegram.input.Updates
+import telegram.input.TelegramInputs
 import telegram.output.OutputEditMessageText
 import telegram.output.OutputMessage
 
@@ -26,9 +26,9 @@ class Api (
 
     private var lastUpdateId = 0
 
-    suspend fun getUpdates(): Updates {
+    suspend fun getUpdates(): TelegramInputs {
         val response: HttpResponse = client.request("${getMethodUri("getUpdates")}?offset=$lastUpdateId")
-        val updates = response.receive<Updates>()
+        val updates = response.receive<TelegramInputs>()
 
         if (updates.ok && updates.result.isNotEmpty()) {
             lastUpdateId = updates.result.maxOf { it.updateId } + 1

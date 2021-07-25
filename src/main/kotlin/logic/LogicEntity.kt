@@ -1,9 +1,9 @@
 package logic
 
-import logic.step.LogicStep
-import logic.step.LogicStepKey
-import logic.step.LogicStepResult
-import logic.step.LogicStepResultBuilder
+import logic.steps.LogicStep
+import logic.steps.LogicStepKey
+import logic.steps.LogicStepResult
+import logic.steps.LogicStepResultBuilder
 
 class LogicEntity<State, Input, Output>(
     private val steps: Map<LogicStepKey, LogicStep<State, Input, Output>>,

@@ -1,19 +1,19 @@
-package marusia
+package marusia_logic
 
 import common.Builder
 import common.builderFun
 import logic.Logic
-import logic.step.*
+import logic.steps.*
+import marusia.input.MarusiaInput
+import marusia.output.MarusiaOutput
 import marusia.step.MarusiaBasicLogicStepBuilder
 import kotlin.properties.Delegates
 
-typealias MarusiaLogic<State> = Logic<State, Input, Output>
-typealias MarusiaLogicStep<State> = LogicStep<State, Input, Output>
-typealias MarusiaLogicStepResultBuilder<State> = LogicStepResultBuilder<State, Input, Output>
-typealias MarusiaLogicValidator<State> = LogicValidator<State, Input>
+typealias MarusiaLogic<State> = Logic<State, MarusiaInput, MarusiaOutput>
+typealias MarusiaLogicStep<State> = LogicStep<State, MarusiaInput, MarusiaOutput>
+typealias MarusiaLogicStepResultBuilder<State> = LogicStepResultBuilder<State, MarusiaInput, MarusiaOutput>
+typealias MarusiaLogicValidator<State> = LogicValidator<State, MarusiaInput>
 
-
-// todo: move out of the api, cause this thing is about logic-api
 class MarusiaLogicBuilder<State>(): Builder<MarusiaLogic<State>> {
     private val steps = mutableMapOf<LogicStepKey, MarusiaLogicStep<State>>()
     private val entrypoints = mutableListOf<LogicStepKey>()
@@ -37,5 +37,4 @@ class MarusiaLogicBuilder<State>(): Builder<MarusiaLogic<State>> {
     }
 }
 
-// todo: move out of the api, cause this thing is about logic-api
-fun <State>logic(init: MarusiaLogicBuilder<State>.() -> Unit): MarusiaLogic<State> = builderFun(MarusiaLogicBuilder(), init)
+fun <State>marusiaLogic(init: MarusiaLogicBuilder<State>.() -> Unit): MarusiaLogic<State> = builderFun(MarusiaLogicBuilder(), init)
