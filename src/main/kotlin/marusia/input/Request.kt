@@ -1,7 +1,7 @@
 package marusia.input
 
 import com.google.gson.annotations.SerializedName
-import marusia.ButtonPayload
+import marusia.output.ButtonPayload
 
 data class Request (
     val command: String,

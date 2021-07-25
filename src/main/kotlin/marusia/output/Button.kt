@@ -1,6 +1,6 @@
 package marusia.output
 
-typealias ButtonPayload = Any
+typealias ButtonPayload = Any // todo: implement
 
 data class Button (
     val title: String,

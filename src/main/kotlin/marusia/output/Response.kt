@@ -1,7 +1,6 @@
 package marusia.output
 
 import com.google.gson.annotations.SerializedName
-import marusia.Button
 
 data class Response (
     val text: List<String>,
